@@ -1,5 +1,6 @@
 package com.naldana.pokedesk;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText mPokemonNumber;
     Button mSearchButton;
-    TextView mResultText;
-    ArrayList<String> lista_poke;
+    ArrayList<pokeResults> lista_poke;
     RecyclerView Rview;
 
 
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lista_poke = new ArrayList<String>();
+        lista_poke = new ArrayList<pokeResults>();
         bindView();
 
         new FetchPokemonTask().execute();
@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
                 new FetchPokemonTask().execute(pokemonNumber);
             }
         });*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -85,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 result = NetworkUtils.getResponseFromHttpUrl(pokeAPI);
                 poke pokemon = g.fromJson(result, poke.class);
                 for (int i = 0; i < pokemon.getResults().size(); i++){
-                    todos.add(pokemon);
-                    lista_poke.add(pokemon.getResults().get(i).getName());
+                    //todos.add(pokemon);
+                    lista_poke.add(pokemon.getResults().get(i));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -136,15 +141,24 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<poke> pokemonInfo) {
             if (pokemonInfo != null || !pokemonInfo.equals("")) {
                 Rview = findViewById(R.id.reciclador);
-
-                Rview.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                initRecycler();
+                /*Rview.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 pokemon_adapter adapter = new pokemon_adapter(lista_poke);
-                Rview.setAdapter(adapter);
+                Rview.setAdapter(adapter);*/
             }
 
         }
-
+        public void initRecycler(){
+            Rview.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            pokemon_adapter adapter = new pokemon_adapter(lista_poke){
+                @Override
+                public void OnSendData(String pokemonData) {
+                    Intent newIntent = new Intent(MainActivity.this,ventana_info.class);
+                    newIntent.putExtra(AppConstants.INTENT_MESSAGE_KEY, pokemonData);
+                    MainActivity.this.startActivity(newIntent);
+                }
+            };
+            Rview.setAdapter(adapter);
+        }
     }
-
-
 }
