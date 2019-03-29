@@ -18,9 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class ventana_info extends AppCompatActivity {
-    TextView name_to_show, weight_to_show, type_to_show, height_to_show;
+    TextView name_to_show, weight_to_show, type_to_show, height_to_show, speed_to_show, specialD_to_show, specialA_to_show,defense_to_show, atack_to_show, hp_to_show;
     public String message = "vacio";
     String nombre, tipo, tipoS, peso, altura;
+    ArrayList<String> listaDEstats;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,14 +53,20 @@ public class ventana_info extends AppCompatActivity {
         weight_to_show = findViewById(R.id.new_window_pk_weight);
         type_to_show = findViewById(R.id.new_window_pk_type);
         height_to_show = findViewById(R.id.new_window_pk_height);
+
+        speed_to_show = findViewById(R.id.new_window_pk_speed);
+        specialD_to_show = findViewById(R.id.new_window_pk_specialDefense);
+        specialA_to_show = findViewById(R.id.new_window_pk_specialAtack);
+        defense_to_show = findViewById(R.id.new_window_pk_defense);
+        atack_to_show = findViewById(R.id.new_window_pk_atack);
+        hp_to_show = findViewById(R.id.new_window_pk_hp);
     }
-    private class FetchPokemonTask extends AsyncTask<String,Void,ArrayList<pokeInd>>{
+    private class FetchPokemonTask extends AsyncTask<String,Void,ArrayList<String>>{
 
         @Override
-        protected ArrayList<pokeInd> doInBackground(String... strings) {
-            ArrayList<pokeInd> todos = new ArrayList<>();
+        protected ArrayList<String> doInBackground(String... strings) {
+            ArrayList<String> todos = new ArrayList<>();
             Gson g = new Gson();
-
             URL pokeAPI = NetworkUtils.getUrls(message);
             String result;
             try {
@@ -78,6 +85,11 @@ public class ventana_info extends AppCompatActivity {
                     }
                 }
                 altura = Integer.toString(pokemonJSON.getHeight()*10);
+                ///////////////////STATS//////////////////////////////
+                for (int i = 0; i < pokemonJSON.getStats().size(); i++){
+                    String statIndividual = Integer.toString(pokemonJSON.getStats().get(i).getBase_stat());
+                    todos.add(statIndividual);
+                }
                 //////////////////////////////////////////////////////////////////////
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,12 +97,19 @@ public class ventana_info extends AppCompatActivity {
             return todos;
         }
         @Override
-        protected void onPostExecute(ArrayList<pokeInd> pokemonInfo) {
+        protected void onPostExecute(ArrayList<String> pokemonInfo) {
             if (pokemonInfo != null || !pokemonInfo.equals("")) {
                 name_to_show.setText("NAME: " + nombre);
                 type_to_show.setText("TYPE: " + tipoS);
                 weight_to_show.setText("WEIGHT: " + peso + "kg");
                 height_to_show.setText("HEIGHT: " + altura + "cm");
+
+                speed_to_show.setText(pokemonInfo.get(0));
+                specialD_to_show.setText(pokemonInfo.get(1));
+                specialA_to_show.setText(pokemonInfo.get(2));
+                defense_to_show.setText(pokemonInfo.get(3));
+                atack_to_show.setText(pokemonInfo.get(4));
+                hp_to_show.setText(pokemonInfo.get(5));
             }
 
         }
