@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class ventana_info extends AppCompatActivity {
     TextView name_to_show, weight_to_show, type_to_show, height_to_show;
     public String message = "vacio";
-    String nombre, tipo, peso, altura;
+    String nombre, tipo, tipoS, peso, altura;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,14 +65,20 @@ public class ventana_info extends AppCompatActivity {
             try {
                 result = NetworkUtils.getResponseFromHttpUrl(pokeAPI);
                 pokeInd pokemonJSON = g.fromJson(result, pokeInd.class);
-                //////hagarrando los datos que quiero de los pokemones
+                //////hagarrando los datos que quiero de los pokemones/////////////////
                 nombre = pokemonJSON.getName();
                 peso = Integer.toString(pokemonJSON.getWeight()/10);
+                tipoS = "";
                 for (int i =0; i < pokemonJSON.getTypes().size(); i++){
-                    tipo = pokemonJSON.getTypes().get(i).getType().getName();
+                    if(pokemonJSON.getTypes().size() == 2){
+                        tipo = pokemonJSON.getTypes().get(i).getType().getName();
+                        tipoS =tipoS + " / " + tipo;
+                    }else {
+                        tipoS = pokemonJSON.getTypes().get(i).getType().getName();
+                    }
                 }
                 altura = Integer.toString(pokemonJSON.getHeight()*10);
-                ////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -82,7 +88,7 @@ public class ventana_info extends AppCompatActivity {
         protected void onPostExecute(ArrayList<pokeInd> pokemonInfo) {
             if (pokemonInfo != null || !pokemonInfo.equals("")) {
                 name_to_show.setText("NAME: " + nombre);
-                type_to_show.setText("TYPE: " + tipo);
+                type_to_show.setText("TYPE: " + tipoS);
                 weight_to_show.setText("WEIGHT: " + peso + "kg");
                 height_to_show.setText("HEIGHT: " + altura + "cm");
             }
