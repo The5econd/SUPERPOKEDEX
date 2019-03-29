@@ -14,21 +14,23 @@ import com.naldana.pokedesk.utilities.poke;
 import com.naldana.pokedesk.utilities.pokeInd;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class ventana_info extends AppCompatActivity {
-    TextView name_to_show, weight_to_show, type_to_show, height_to_show, speed_to_show, specialD_to_show, specialA_to_show,defense_to_show, atack_to_show, hp_to_show;
+    TextView name_to_show, weight_to_show, type_to_show, height_to_show, speed_to_show, specialD_to_show,
+            specialA_to_show,defense_to_show, atack_to_show, hp_to_show, abilities_to_show;
     public String message = "vacio";
     String nombre, tipo, tipoS, peso, altura;
-    ArrayList<String> listaDEstats;
+    //ArrayList<String> listaHABILIDADES;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ventana_info_datos);
         bindView();
 
-        TextView urlPokemon = findViewById(R.id.url_recibido);
+        //TextView urlPokemon = findViewById(R.id.url_recibido);
         Intent newIntent = this.getIntent();
         if (newIntent != null){
             //message ya es mi URL del pokemon en la nueva ventana
@@ -60,12 +62,15 @@ public class ventana_info extends AppCompatActivity {
         defense_to_show = findViewById(R.id.new_window_pk_defense);
         atack_to_show = findViewById(R.id.new_window_pk_atack);
         hp_to_show = findViewById(R.id.new_window_pk_hp);
+        abilities_to_show = findViewById(R.id.new_window_pk_abilities);
     }
-    private class FetchPokemonTask extends AsyncTask<String,Void,ArrayList<String>>{
+    private class FetchPokemonTask extends AsyncTask<String,Void,ArrayList<ArrayList>>{
 
         @Override
-        protected ArrayList<String> doInBackground(String... strings) {
-            ArrayList<String> todos = new ArrayList<>();
+        protected ArrayList<ArrayList> doInBackground(String... strings) {
+            ArrayList<ArrayList> todasListas = new ArrayList<>();
+            ArrayList<String> listaSTATS = new ArrayList<>();
+            ArrayList<String> listaHABILIDADES = new ArrayList<>();
             Gson g = new Gson();
             URL pokeAPI = NetworkUtils.getUrls(message);
             String result;
@@ -88,28 +93,49 @@ public class ventana_info extends AppCompatActivity {
                 ///////////////////STATS//////////////////////////////
                 for (int i = 0; i < pokemonJSON.getStats().size(); i++){
                     String statIndividual = Integer.toString(pokemonJSON.getStats().get(i).getBase_stat());
-                    todos.add(statIndividual);
+                    listaSTATS.add(statIndividual);
                 }
+                //////////////////HABILIDADES/////////////////////////////////////////
+                for (int i = 0; i < pokemonJSON.getMoves().size(); i++){
+                    String habilidadIndividual = pokemonJSON.getMoves().get(i).getMove().getName();
+                    listaHABILIDADES.add(habilidadIndividual);
+                }///////////////////meter las listas en una sola//////////////////////
+                todasListas.add(listaSTATS);
+                todasListas.add(listaHABILIDADES);
                 //////////////////////////////////////////////////////////////////////
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return todos;
+            return todasListas;
         }
         @Override
-        protected void onPostExecute(ArrayList<String> pokemonInfo) {
+        protected void onPostExecute(ArrayList<ArrayList> pokemonInfo) {
             if (pokemonInfo != null || !pokemonInfo.equals("")) {
                 name_to_show.setText("NAME: " + nombre);
                 type_to_show.setText("TYPE: " + tipoS);
                 weight_to_show.setText("WEIGHT: " + peso + "kg");
                 height_to_show.setText("HEIGHT: " + altura + "cm");
 
-                speed_to_show.setText(pokemonInfo.get(0));
-                specialD_to_show.setText(pokemonInfo.get(1));
-                specialA_to_show.setText(pokemonInfo.get(2));
-                defense_to_show.setText(pokemonInfo.get(3));
-                atack_to_show.setText(pokemonInfo.get(4));
-                hp_to_show.setText(pokemonInfo.get(5));
+                ArrayList<String> nuevaListaStats = new ArrayList<>();
+                ArrayList<String> nuevaListaHabilidades = new ArrayList<>();
+
+                for (int i = 0; i < pokemonInfo.get(0).size(); i++){
+                    nuevaListaStats.add(pokemonInfo.get(0).get(i).toString());
+                }
+                for (int i = 0; i < pokemonInfo.get(1).size(); i++){
+                    nuevaListaHabilidades.add(pokemonInfo.get(1).get(i).toString());
+                }
+
+                speed_to_show.setText(nuevaListaStats.get(0));
+                specialD_to_show.setText(nuevaListaStats.get(1));
+                specialA_to_show.setText(nuevaListaStats.get(2));
+                defense_to_show.setText(nuevaListaStats.get(3));
+                atack_to_show.setText(nuevaListaStats.get(4));
+                hp_to_show.setText(nuevaListaStats.get(5));
+                for (int i = 0; i < nuevaListaHabilidades.size() ; i++){
+                    String habilidad = abilities_to_show.getText().toString();
+                    abilities_to_show.setText(habilidad + nuevaListaHabilidades.get(i) + "\n");
+                }
             }
 
         }

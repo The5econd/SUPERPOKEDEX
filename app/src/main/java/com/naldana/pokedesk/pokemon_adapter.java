@@ -28,6 +28,7 @@ public abstract class pokemon_adapter extends RecyclerView.Adapter<pokemon_adapt
     @Override
     public Viewholder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.pokemones_view,null,false);
+        view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,RecyclerView.LayoutParams.WRAP_CONTENT));
         return new Viewholder(view);
     }
 
