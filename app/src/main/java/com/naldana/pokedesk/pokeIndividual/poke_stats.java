@@ -5,7 +5,37 @@ import java.util.ArrayList;
 public class poke_stats {
     private int base_stat;
     private int effort;
-    private ArrayList<poke_stats_stat> stat;
+    public class stat{
+        public stat() {
+        }
+        private String name;
+        private String url;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+    private stat stat;
+
+    public poke_stats.stat getStat() {
+        return stat;
+    }
+
+    public void setStat(poke_stats.stat stat) {
+        this.stat = stat;
+    }
 
     public int getBase_stat() {
         return base_stat;
@@ -21,13 +51,5 @@ public class poke_stats {
 
     public void setEffort(int effort) {
         this.effort = effort;
-    }
-
-    public ArrayList<poke_stats_stat> getStat() {
-        return stat;
-    }
-
-    public void setStat(ArrayList<poke_stats_stat> stat) {
-        this.stat = stat;
     }
 }

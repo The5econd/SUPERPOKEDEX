@@ -37,23 +37,14 @@
             android:layout_alignBaseline="@id/et_pokemon_number"
             android:layout_alignParentRight="true"
             android:text="@string/action_search" />
-
-
-
     </RelativeLayout>
 
-    <ScrollView
-        android:layout_marginTop="@dimen/medium_gap"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reciclador"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_nothing_to_show"/>
-
-    </ScrollView>
-
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

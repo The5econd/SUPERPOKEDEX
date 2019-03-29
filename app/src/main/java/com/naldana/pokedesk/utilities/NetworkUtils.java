@@ -12,15 +12,13 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    public static final String POKEMON_API_BASE_URL = "https://pokeapi.co/api/v2/";
-    public static final String POKEMON_INFO = "pokemon";
+    public static final String POKEMON_API_BASE_URL = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=964";
 
-    private static final String TAG = NetworkUtils.class.getSimpleName();
+    //private static final String TAG = NetworkUtils.class.getSimpleName();
 
     public static URL buildUrl() {
         Uri builtUri = Uri.parse(POKEMON_API_BASE_URL)
                 .buildUpon()
-                .appendPath(POKEMON_INFO)
                 .build();
 
         URL url = null;
